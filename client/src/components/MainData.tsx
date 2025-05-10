@@ -25,7 +25,7 @@ const MainData = () => {
         // 后续实现水下系统页面跳转
         break;
       case 'data':
-        // 后续实现数据中心页面跳转
+        navigate('/datacenter');
         break;
       case 'ai':
         // 后续实现智能中心页面跳转

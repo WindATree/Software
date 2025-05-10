@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 import './styles/App.css';
 import AuthPage from './components/AuthPage';
 import MainData from './components/MainData';
-import DataCenter from './DataCenter';
+import DataCenter from './components/DataCenter';
 
 interface User {
   username: string;
@@ -30,6 +30,7 @@ function App() {
       <Routes>
         <Route path="/auth" element={!user ? <AuthPage /> : <Navigate to="/dashboard" />} />
         <Route path="/dashboard" element={user ? <MainData /> : <Navigate to="/auth" />} />
+        <Route path="/datacenter" element={user ? <DataCenter /> : <Navigate to="/auth" />} />
         <Route path="/" element={
           <div className="App">
             <header className="App-header">
