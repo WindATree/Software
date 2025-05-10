@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, render_template
 from flask_cors import CORS
 from models import db, User, HydroData
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,6 +9,10 @@ import os
 import pandas as pd
 from werkzeug.datastructures import FileStorage
 from math import isnan
+import random
+import psutil
+import gpustat
+from pynvml import *
 
 app = Flask(__name__)
 CORS(app)
@@ -72,6 +76,74 @@ def register():
             "role": new_user.role,
         }
     )
+
+# 模拟设备状态数据
+def get_device_stats():
+    try:
+        nvmlInit()
+        gpu_handle = nvmlDeviceGetHandleByIndex(0)
+    except:
+        gpu_handle = None
+    
+    # 获取电池信息
+    try:
+        battery = psutil.sensors_battery()
+        battery_percent = battery.percent if battery else None
+    except:
+        battery_percent = None
+    
+    # 获取 GPU 信息 (使用 gpustat 作为首选)
+    try:
+        gpu_stats = gpustat.new_query()
+        gpu_util = gpu_stats.gpus[0].utilization if gpu_stats.gpus else None
+    except:
+        gpu_util = None
+    
+    # 如果 gpustat 不可用，尝试使用 pynvml
+    if gpu_util is None and gpu_handle:
+        try:
+            gpu_util = nvmlDeviceGetUtilizationRates(gpu_handle).gpu
+        except:
+            gpu_util = None
+    
+    # 组装返回数据
+    stats = [
+        {"name": "设备电量", "value": battery_percent or 100},  # 如果没有电池信息，假设是台式机
+        {"name": "CPU占用率", "value": psutil.cpu_percent(interval=1)},
+        {"name": "GPU占用率", "value": gpu_util or 0},  # 如果没有 GPU，显示 0
+        {"name": "内存占用率", "value": psutil.virtual_memory().percent}
+    ]
+    
+    return stats
+
+
+# 模拟用户数据
+def get_user_stats():
+    return {
+        "totalUsers": random.randint(100, 200),
+        "farmers": random.randint(50, 100),
+        "managers": random.randint(10, 30)
+    }
+
+# 模拟传感器数据
+def get_sensor_stats():
+    return {
+        "totalSensors": random.randint(500, 1000),
+        "activeSensors": random.randint(400, 800),
+        "faultySensors": random.randint(0, 50)
+    }
+
+@app.route('/api/device-stats', methods=['GET'])
+def device_stats():
+    return jsonify(get_device_stats())
+
+@app.route('/api/user-stats', methods=['GET'])
+def user_stats():
+    return jsonify(get_user_stats())
+
+@app.route('/api/sensor-stats', methods=['GET'])
+def sensor_stats():
+    return jsonify(get_sensor_stats())
 
 if __name__ == "__main__":
     with app.app_context():

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 import './styles/App.css';
 import AuthPage from './components/AuthPage';
 import MainData from './components/MainData';
+import DataCenter from './DataCenter';
 
 interface User {
   username: string;
@@ -59,7 +60,6 @@ function App() {
                   </p>
                 </div>
               </div>
-
               <div className="feature-grid">
                 <div className="feature-card">
                   <div className="card-header">
@@ -71,7 +71,6 @@ function App() {
                     <span className="tag">浮标监测</span>
                   </div>
                 </div>
-
                 <div className="feature-card">
                   <div className="card-header">
                     <h3>智能决策分析</h3>
@@ -82,7 +81,6 @@ function App() {
                     <span className="tag">风险评估</span>
                   </div>
                 </div>
-
                 <div className="feature-card">
                   <div className="card-header">
                     <h3>生态预警系统</h3>
@@ -93,7 +91,6 @@ function App() {
                     <span className="tag">风险预警</span>
                   </div>
                 </div>
-
                 <div className="feature-card">
                   <div className="card-header">
                     <h3>养殖管理优化</h3>
